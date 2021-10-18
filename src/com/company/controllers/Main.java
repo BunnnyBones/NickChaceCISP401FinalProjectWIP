@@ -15,10 +15,11 @@ public class Main {
       //  }
 
         //Trying to test the shuffleDeck() function
-        Deck deck = new Deck();
+       // Deck deck = new Deck();
 
-        deck.shuffleDeck();
+        //deck.shuffleDeck();
 
+        //I deleted the "System.out.println()" inside of shuffleDeck()... It was not working and got overly complicated
 
 
     }
