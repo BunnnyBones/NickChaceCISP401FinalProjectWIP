@@ -1,10 +1,21 @@
 package com.company.controllers;
 
 import com.company.models.Deck;
+import com.company.models.Board;
+import com.company.models.Hand;
 
 public class Main {
 
     public static void main(String[] args) {
+
+        Board player1 = new Board();
+        Board player2 = new Board();
+
+        Deck player1Deck = new Deck();
+        Deck player2Deck = new Deck();
+
+        Hand player1Hand = new Hand();
+        Hand player2Hand = new Hand();
 
 
 
@@ -14,12 +25,8 @@ public class Main {
 
       //  }
 
-        //Trying to test the shuffleDeck() function
-       // Deck deck = new Deck();
 
-        //deck.shuffleDeck();
 
-        //I deleted the "System.out.println()" inside of shuffleDeck()... It was not working and got overly complicated
 
 
     }

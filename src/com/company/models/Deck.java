@@ -1,10 +1,10 @@
 package com.company.models;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class Deck {
-    //Stores the deck and all of its tasks
-    //Is this even a model?
 
     private static final int deckSize = 54; //52 + 2 jokers
 
@@ -32,7 +32,6 @@ public class Deck {
             }
 
             //10 is not considered a face card
-            //IntelliJ suggested this below, I don't know if it works to set the faceCard variable correctly
             faceCard = value == 11 || value == 12 || value == 13; //Jack, Queen, and King
 
 
@@ -51,17 +50,24 @@ public class Deck {
         //End of Constructor
     }
 
-    //I don't think this belongs in a model
     public void shuffleDeck(){
 
-        //Needs:
-        //Create secondary and expendable array
-        //Randomize the order of the index numbers somehow, without repeats
-        //Assign temp. to permanent index
+        List<Integer> newDeck = new ArrayList<>();
+        for (int i = 0; i < 54; i++) {
+            newDeck.add(i);
+        }
+        //"It just Works" -TH
+        Collections.shuffle(newDeck);
 
-        //Maybe look into ArrayLists and "Collection.shuffle();"
 
     }
+
+    //Idk if this belongs here
+    public void resetCaravan(int selectedCaravan){}
+
+    //When a card is needing to be drawn to the hand, top card is removed from the deck and sent to the hand.
+    //Is called by "drawCard in Hand Class"
+    public void removeTopCard(){}
 
 
 

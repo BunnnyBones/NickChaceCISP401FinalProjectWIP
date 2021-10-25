@@ -1,8 +1,19 @@
 package com.company.models;
 
 public class Hand {
-    //Stores each player's hand and completes its tasks
-    //Holds Cards like Deck but does different stuff
+
+    private int handSize = 5;
+    private Cards[] hand = new Cards[handSize];
+
+    public void initialDraw(){}
+
+    public void drawCard(){}
+
+    public void removeCard(int card){}
+
+    public Cards getCard(int index){
+        return hand[index];
+    }
 
 
 }

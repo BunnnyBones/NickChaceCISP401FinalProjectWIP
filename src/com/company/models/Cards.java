@@ -53,7 +53,7 @@ public class Cards {
             //if played on an Ace, removes all non-face cards of the suit of the ace from play (all hearts)
             //if played 2-10, removes all of said card from play (all 7s)
         } else {
-            //nothing
+            //nothing, cannot be any other value
         }
 
     }
