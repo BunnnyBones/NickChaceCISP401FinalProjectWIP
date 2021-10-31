@@ -5,7 +5,8 @@ import com.company.models.Hand;
 
 public class GetInput {
 
-    private int userInput;   //I originally had this as a string but with a menu it will be easier to use numbers for processing and actually playing the game
+    private int userInput;   //I originally had this as a string but with a menu it
+                            // will be easier to use numbers for processing and actually playing the game
     private Cards targetCard;
 
     public int getUserInput(){
@@ -17,7 +18,7 @@ public class GetInput {
     }
 
     public Cards convertInputToCard(Hand hand){
-        hand.getCard(userInput);
+        hand.getCardInHand(userInput);
 
         return targetCard;
     }

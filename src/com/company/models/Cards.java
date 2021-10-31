@@ -38,7 +38,11 @@ public class Cards {
         this.faceCard = faceCard;
     }
 
-    //This probably does not belong here, but I am keeping this here as a note
+    public void setIndex(int index){this.index = index;}
+
+    public int getIndex(){return index;}
+
+    //The comments probably do not belong here, but I am keeping this here as a note
     public void checkCardEffect(){
 
         if(value <= 10){
@@ -57,6 +61,6 @@ public class Cards {
         }
 
     }
-    //0 = not face cards, 11 = Jack, 12 = Queen, 13 = King, 14 = Joker
+    //-1 = blank card, 1-10 = not face cards, 11 = Jack, 12 = Queen, 13 = King, 14 = Joker
 
 }

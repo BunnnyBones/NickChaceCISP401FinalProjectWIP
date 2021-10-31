@@ -7,6 +7,7 @@ import java.util.List;
 public class Deck {
 
     private static final int deckSize = 54; //52 + 2 jokers
+    private int currentCard;
 
     private Cards[] theDeck = new Cards[54];
 
@@ -15,7 +16,7 @@ public class Deck {
         String suit;
         boolean faceCard;
         int value;
-
+        currentCard = 0;
 
 
         for(int index = 0;index < 52; index++){
@@ -59,15 +60,43 @@ public class Deck {
         //"It just Works" -TH
         Collections.shuffle(newDeck);
 
+        Cards[] tempDeck = new Cards[54];
+        //Converting ArrayList to a temp. array as not to damage "theDeck"/original
+        for(int i = 0; i < newDeck.size();i++){
+            //This should make tempDeck's index equal to the index number of theDeck AT the randomized index in newDeck
+            //I.E. tempDeck[0] should be the value of theDeck[random Location]
+            tempDeck[i].setIndex(theDeck[newDeck.get(i)].getIndex());
+            tempDeck[i].setSuit(theDeck[newDeck.get(i)].getSuit());
+            tempDeck[i].setValue(theDeck[newDeck.get(i)].getValue());
+            tempDeck[i].setFaceCard(theDeck[newDeck.get(i)].getFaceCard());
+        }
 
+        //Updating original Array
+        for(int i = 0; i < deckSize; i++){
+            theDeck[i].setIndex(tempDeck[i].getIndex());
+            theDeck[i].setSuit(tempDeck[i].getSuit());
+            theDeck[i].setValue(tempDeck[i].getValue());
+            theDeck[i].setFaceCard(tempDeck[i].getFaceCard());
+        }
     }
 
-    //Idk if this belongs here
-    public void resetCaravan(int selectedCaravan){}
 
-    //When a card is needing to be drawn to the hand, top card is removed from the deck and sent to the hand.
-    //Is called by "drawCard in Hand Class"
-    public void removeTopCard(){}
+    //Once the limit has been reached (53) then that player loses
+    public Cards removeTopCard(){
+        Cards card = theDeck[currentCard];
+
+        currentCard += 1;
+        return card;
+    }
+
+    public void setCurrentCard(int x){
+        currentCard = x;
+    }
+
+    public int getCurrentCard(){return currentCard;}
+
+    public int getDeckSize(){return deckSize;}
+
 
 
 
