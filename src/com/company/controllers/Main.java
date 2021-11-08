@@ -123,7 +123,7 @@ public class Main {
                    //Need Player 2's turn which is just a repeat of Player 1
                    //Need to update board with the correct/valid input
                    //Need to distingush between facecard and not face card for placement as rules vary
-                   //Need to update loop that checks for correct placement to account for faceCards
+                   //Not doing this one anymore
 
                     //Future plan: only allow user to input what Caravan pile they wish to select. Only allow them to play
                    //speical cards on the topmost card in the Caravan (should help balance out the power) and only requires
