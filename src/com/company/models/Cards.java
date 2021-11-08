@@ -4,10 +4,10 @@ public class Cards {
 
     private boolean faceCard;
     private String suit;
-    private int value;
+    private Integer value;  //Changed value to type: Integer from int, so in View, I can print it out and have it not show up if it is null
     private int index;
 
-    public Cards(String suit, int value, boolean faceCard, int index) {
+    public Cards(String suit, Integer value, boolean faceCard, int index) {
         this.suit = suit;
         this.value = value;
         this.faceCard = faceCard;
@@ -22,11 +22,11 @@ public class Cards {
         this.suit = suit;
     }
 
-    public int getValue() {
+    public Integer getValue() {
         return value;
     }
 
-    public void setValue(int value) {
+    public void setValue(Integer value) {
         this.value = value;
     }
 
@@ -43,14 +43,16 @@ public class Cards {
     public int getIndex(){return index;}
 
     //The comments probably do not belong here, but I am keeping this here as a note
-    public void checkCardEffect(){
+    public void checkCardEffect(Cards selectedCard, Cards playedOn, Board board, int caravan){  //caravan will be sent over as the user input that will determine which Caravan to choose for the queen
+
 
         if(value <= 10){
             //nothing happens
         } else if (value == 11){
-            //Remove card that it is played on, and any additionally played face cards
+            Cards defaultCard = new Cards("",null, false, -1); //Resets both cards to empty
+            selectedCard = playedOn = defaultCard;
         } else if (value == 12){
-            //Changes the suit of the Caravan played on to that of the queen, and reverses direction
+            board.setOrder1(!board.getOrder1());
         } else if (value == 13){
             //Doubles the value of card played on
         } else if (value == 14){

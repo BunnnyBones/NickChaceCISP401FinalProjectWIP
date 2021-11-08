@@ -14,9 +14,13 @@ public class Board {
     private int total2;
     private int total3;
 
-    public Board() {  //Initializing all the slots in all 3 arrays
+    private boolean order1;  //These are to determine the direction of the Caravan. You can only increase or decrease in numbers unless you have a queen
+    private boolean order2;  //May change to String but true = increase && false = decrease should work
+    private boolean order3;
 
-        Cards defaultCard = new Cards("none", 0, false, -1);
+    private Cards defaultCard = new Cards("", null, false, -1);
+
+    public Board() {  //Initializing all the slots in all 3 arrays
 
         for(int i = 0; i < row; i++){
             for(int j = 0; j <column; j++){
@@ -29,7 +33,11 @@ public class Board {
 
 
     public void resetCaravan(int selectedCaravan){
-
+        for(int i = 0; i < row; i++){
+            mainBoard[selectedCaravan][i] = defaultCard;
+            specialBoard1[selectedCaravan][i] = defaultCard;
+            specialBoard2[selectedCaravan][i] = defaultCard;
+        }
     }
 
     public Cards[][] getMainBoard() {
@@ -78,5 +86,33 @@ public class Board {
 
     public void setTotal3(int total3) {
         this.total3 = total3;
+    }
+
+    public int getRows(){return row;}
+
+    public int getCol(){return column;}
+
+    public boolean getOrder1() {
+        return order1;
+    }
+
+    public void setOrder1(boolean order1) {
+        this.order1 = order1;
+    }
+
+    public boolean getOrder2() {
+        return order2;
+    }
+
+    public void setOrder2(boolean order2) {
+        this.order2 = order2;
+    }
+
+    public boolean getOrder3() {
+        return order3;
+    }
+
+    public void setOrder3(boolean order3) {
+        this.order3 = order3;
     }
 }

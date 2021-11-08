@@ -1,6 +1,9 @@
 package com.company.views;
 
 import com.company.controllers.ValidateInput;
+import com.company.models.Board;
+import com.company.models.Cards;
+import com.company.models.Hand;
 
 import java.util.Random;
 import java.util.Scanner;
@@ -76,7 +79,7 @@ public class CmdLineView {
         System.out.println("1) Play Game");
         System.out.println("2) Rules");
         System.out.println("3) Quit Game");
-        //Potential option to customize cards included in your deck
+        //Potential option to customize cards included in your deck if time permits
 
         return in.nextLine();
     }
@@ -107,7 +110,7 @@ public class CmdLineView {
         } else if(randomMessage == 2){
             System.out.println("blown the competition away");
         } else {
-            System.out.println("won effortlessly");
+            System.out.println("defeated their greatest foe!");
         }
 
     }
@@ -120,14 +123,91 @@ public class CmdLineView {
 
 
       //Prints out the game board
-    public void printBoard() {
+    public void printBoard(Board player, Board opponent, String name) {
+        System.out.println("  " + name + "'s turn");            //Turn Header
+        System.out.print("==");
+        for(int i = 0; i < name.length();i++){
+            System.out.print("=");
+        }
+        System.out.println("=========");
+
+        System.out.println("\n  " + name + "'s Caravans:");
+        System.out.print("=============");
+        for(int i = 0; i < name.length();i++){
+            System.out.print("=");
+        }
+        System.out.print("\n");
+
+
+        Cards[][] playerBoard1 = player.getMainBoard();
+        Cards[][] playerBoard2 = player.getSpecialBoard1();
+        Cards[][] playerBoard3 = player.getSpecialBoard2();
+
+        for(int i = 0; i < player.getRows();i++){  //6 rows
+
+            for(int j = 0; j < player.getCol();j++){  //3 columns
+                System.out.print(playerBoard1[i][j].getValue() + playerBoard1[i][j].getSuit());  //Value is Integer set to null and suit is "" when initialized so empty slots should show as empty
+                System.out.print("(" + playerBoard2[i][j].getValue() + playerBoard2[i][j].getSuit() + ")"); //Reminder, when removing card, set it to default one in Board
+                System.out.print("(" + playerBoard3[i][j].getValue() + playerBoard3[i][j].getSuit() + ")");
+                System.out.print("  ");
+            }
+            System.out.print("\n");
+        }
+        System.out.println(player.getTotal1() + "  " + player.getTotal2() + "  " + player.getTotal3() + "\n");
+
+
+        Cards[][] opponentBoard1 = player.getMainBoard();
+        Cards[][] opponentBoard2 = player.getSpecialBoard1();
+        Cards[][] opponentBoard3 = player.getSpecialBoard2();
+
+        System.out.println("\n  Opponent's Caravans:");
+        System.out.print    ("=========================");
+        System.out.print("\n");
+
+        for(int i = 0; i < opponent.getRows();i++){  //6 rows
+
+            for(int j = 0; j < opponent.getCol();j++){  //3 columns
+                System.out.print(opponentBoard1[i][j].getValue() + opponentBoard1[i][j].getSuit());  //Value is Integer set to null and suit is "" when initialized so empty slots should show as empty
+                System.out.print("(" + opponentBoard2[i][j].getValue() + opponentBoard2[i][j].getSuit() + ")"); //Reminder, when removing card, set it to default one in Board
+                System.out.print("(" + opponentBoard3[i][j].getValue() + opponentBoard3[i][j].getSuit() + ")");
+                System.out.print("  ");
+            }
+            System.out.print("\n");
+        }
+        System.out.println(opponent.getTotal1() + "  " + opponent.getTotal2() + "  " + opponent.getTotal3() + "\n");
 
     }
 
      //Prints out the player's hand
-    public void printHands(){
+    public String printHand(Hand hand, String name){
 
+        System.out.println("  " + name + "'s Hand:");
+        for(int i = 0; i < name.length();i++){
+            System.out.print("=");
+        }
+        System.out.println("=============");
+
+        for(int i = 1; i <hand.getHandSize() + 1; i++){
+            System.out.println(i + ") " + hand.getCard(i).getValue() + hand.getCard(i).getSuit());
+        }
+
+        System.out.println("Select a card to play");
+        System.out.print("Your Input: ");
+        return in.nextLine();
     }
+
+    public String promptRow(){
+        System.out.println("What Row would you like to place your card in?");
+        System.out.print("Your Input: ");
+        return in.nextLine();
+    }
+
+    public String promptCol(){
+        System.out.println("What Column would you like to place your card in?");
+        System.out.print("Your Input: ");
+        return in.nextLine();
+    }
+
 }
 
 

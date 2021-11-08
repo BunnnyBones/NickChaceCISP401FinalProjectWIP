@@ -23,13 +23,13 @@ public class Deck {
             value = (index % 13) + 1;
 
             if(index <= 12){         //cards 0-12
-                suit = "hearts";
+                suit = "H";  //Hearts
             } else if (index <= 25){ // cards 13-25
-                suit = "diamonds";
+                suit = "D";  //Diamonds
             } else if (index <= 38){ // cards 26-38
-                suit = "spades";
+                suit = "S";  //Spades
             } else{              // cards 39-51
-                suit = "clubs";
+                suit = "C";  //Clubs
             }
 
             //10 is not considered a face card
@@ -49,6 +49,8 @@ public class Deck {
         theDeck[53] = joker2;
 
         //End of Constructor
+
+        shuffleDeck();
     }
 
     public void shuffleDeck(){

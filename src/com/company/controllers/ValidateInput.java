@@ -13,7 +13,8 @@ public class ValidateInput {
     }
 
     //This checks to make sure input is an int, and a valid main menu choice
-    public boolean validateInt(String input){
+    //Probably a better way to do this
+    public boolean validateInt(String input, int version){
         int x;
 
         try{
@@ -21,10 +22,29 @@ public class ValidateInput {
         } catch(NumberFormatException e){
             return false;
         }
+        if(version == 1){
 
-        if(!(x == 1 || x == 2 || x == 3)){
-            return false;
+            if(!(x == 1 || x == 2 || x == 3)){
+                return false;
+            }
+
         }
+        if(version == 2){
+
+            if(!(x == 1 || x == 2 || x == 3 || x == 4 || x == 5)){
+                return false;
+            }
+
+        }
+
+        if(version == 3){
+
+            if(!(x == 1 || x == 2 || x == 3 || x == 4 || x == 5) || x == 6){
+                return false;
+            }
+
+        }
+
         return true;
     }
 

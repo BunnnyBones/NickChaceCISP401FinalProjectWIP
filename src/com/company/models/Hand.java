@@ -6,9 +6,13 @@ public class Hand {
     private Cards[] hand = new Cards[handSize];
     private int lastCardSlotSelected;
 
+    public Hand(Deck deck){
+        initialDraw(deck);
+    }
+
     //Initializes hand with cards from deck
     public void initialDraw(Deck deck){
-        for(int i = 0;i < handSize; i++){
+        for(int i = 0;i < handSize -1; i++){
             hand[i] = deck.removeTopCard();
         }
     }
@@ -29,7 +33,8 @@ public class Hand {
         return hand[index];
     }
 
-    //Possible function to push cards down to make new one enter on 5
+    public int getHandSize(){return handSize;}
 
+    public Cards getCard(int x){return hand[x];}
 
 }
