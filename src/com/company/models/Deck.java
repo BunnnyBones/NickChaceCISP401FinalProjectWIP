@@ -43,9 +43,9 @@ public class Deck {
         }
 
              //The two jokers
-        Cards joker1 = new Cards("Joker", 14, false, 52);
+        Cards joker1 = new Cards("", 14, false, 52);
         theDeck[52] = joker1;
-        Cards joker2 = new Cards("Joker", 14, false, 53);
+        Cards joker2 = new Cards("", 14, false, 53);
         theDeck[53] = joker2;
 
         //End of Constructor

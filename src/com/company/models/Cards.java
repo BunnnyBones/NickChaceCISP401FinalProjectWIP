@@ -47,7 +47,7 @@ public class Cards {
 
 
         if(value <= 10){
-            //nothing happens
+            //Add value to the total in Board
         } else if (value == 11){
             Cards defaultCard = new Cards("",null, false, -1); //Resets both cards to empty
             selectedCard = playedOn = defaultCard;

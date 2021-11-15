@@ -18,6 +18,10 @@ public class Board {
     private boolean order2;  //May change to String but true = increase && false = decrease should work
     private boolean order3;
 
+    private int layerCount1 = 0;  //This is to keep track of what "layer" or row is the next available for player input and based on number of columns that should be the same for all 3 boards
+    private int layerCount2 = 0;
+    private int layerCount3 = 0;
+
     private Cards defaultCard = new Cards("", null, false, -1);
 
     public Board() {  //Initializing all the slots in all 3 arrays
@@ -68,24 +72,12 @@ public class Board {
         return total1;
     }
 
-    public void setTotal1(int total1) {
-        this.total1 = total1;
-    }
-
     public int getTotal2() {
         return total2;
     }
 
-    public void setTotal2(int total2) {
-        this.total2 = total2;
-    }
-
     public int getTotal3() {
         return total3;
-    }
-
-    public void setTotal3(int total3) {
-        this.total3 = total3;
     }
 
     public int getRows(){return row;}
@@ -100,19 +92,66 @@ public class Board {
         this.order1 = order1;
     }
 
-    public boolean getOrder2() {
-        return order2;
+    public int getLayerCount(int whichOne){
+        if(whichOne == 1){
+            return layerCount1;
+        }
+        if(whichOne == 2){
+            return layerCount2;
+        }
+        if(whichOne == 3){
+            return layerCount3;
+        }
+        //Else
+        return -1;
     }
 
-    public void setOrder2(boolean order2) {
-        this.order2 = order2;
+    public boolean getOrder(int whichOne){
+        if(whichOne == 1){
+            return order1;
+        }
+        if(whichOne == 2){
+            return order2;
+        }
+        if(whichOne == 3){
+            return order3;
+        }
+        //Else
+        return false;  //Default; Should never be hit
     }
 
-    public boolean getOrder3() {
-        return order3;
+    public void setOrder(int whichOne, boolean order){
+        if(whichOne == 1){
+            order1 = order;
+        }
+        if(whichOne == 2){
+            order2 = order;
+        }
+        if(whichOne == 3){
+            order3 = order;
+        }
     }
 
-    public void setOrder3(boolean order3) {
-        this.order3 = order3;
+    public void setTotal(int whichOne, int value){
+        if(whichOne == 1){
+            total1 = value;
+        }
+        if(whichOne == 2){
+            total2 = value;
+        }
+        if(whichOne == 3){
+            total3 = value;
+        }
+    }
+    public void setLayers(int whichOne, int value) {
+        if (whichOne == 1) {
+            layerCount1 = value;
+        }
+        if (whichOne == 2) {
+            layerCount2 = value;
+        }
+        if (whichOne == 3) {
+            layerCount3 = value;
+        }
     }
 }

@@ -52,6 +52,8 @@ public class CmdLineView {
         System.out.print("\n");
         System.out.println("Additionally, you can only place up to 2 special cards on 1 regular card");
 
+        System.out.println("Lastly, Cards will appear in an abbreviated form. So, a 4 of Clubs will be \"4C\", a queen of diamonds will be \"QD\", and a Joker would be \"XX\"");
+
     }
 
     public void welcomeMessage(){
@@ -115,8 +117,8 @@ public class CmdLineView {
 
     }
 
-    public String gatherNames(int player){
-        System.out.println("What is Player "+player+"'s name?");
+    public String gatherNames(int playerNum){
+        System.out.println("What is Player "+playerNum+"'s name?");
         System.out.print("Your Input: ");
         return in.nextLine();
     }
@@ -179,33 +181,67 @@ public class CmdLineView {
     }
 
      //Prints out the player's hand
-    public String printHand(Hand hand, String name){
+    public void printHand(Hand hand, String name) {
 
         System.out.println("  " + name + "'s Hand:");
-        for(int i = 0; i < name.length();i++){
+        for (int i = 0; i < name.length(); i++) {
             System.out.print("=");
         }
         System.out.println("=============");
 
-        for(int i = 1; i <hand.getHandSize() + 1; i++){
+        for (int i = 1; i < hand.getHandSize() + 1; i++) {
+            String cardValue = String.valueOf(hand.getCard(i).getValue());
+            if (cardValue == "11") {
+                cardValue = "J";
+            } else if (cardValue == "12") {
+                cardValue = "Q";
+            } else if (cardValue == "13") {
+                cardValue = "K";
+            } else if (cardValue == "14") {
+                cardValue = "XX";
+            }
             System.out.println(i + ") " + hand.getCard(i).getValue() + hand.getCard(i).getSuit());
         }
 
-        System.out.println("Select a card to play");
+    }
+    public String printMiniMenu(){
+        System.out.println("\n  Select an Action");
+        System.out.println  ("====================");
+        System.out.println  ("1) Play a Card");
+        System.out.println  ("2) Discard a Card");
+        System.out.println  ("3) Discard a Caravan");
+        System.out.println  ("4) Quit");
         System.out.print("Your Input: ");
         return in.nextLine();
     }
 
-    public String promptRow(){
-        System.out.println("What Row would you like to place your card in?");
+    public String promptCardSelect(){
+        System.out.println("Select a Card from your Hand");
         System.out.print("Your Input: ");
         return in.nextLine();
     }
 
-    public String promptCol(){
-        System.out.println("What Column would you like to place your card in?");
+    public String promptCardPlacement(){
+        System.out.println("Select a place for you Card");
+        System.out.println("1) Left");
+        System.out.println("2) Center");
+        System.out.println("3) Right");
         System.out.print("Your Input: ");
         return in.nextLine();
+    }
+
+    public String promptCaravanChoice(){
+        System.out.println("Select a Caravan to Discard");
+        System.out.println("1) Left");
+        System.out.println("2) Center");
+        System.out.println("3) Right");
+        System.out.print("Your Input: ");
+        return in.nextLine();
+    }
+
+    public void spaceFull(){
+        System.out.println("The space you selected is already occupied.");
+        System.out.println("Try playing a regular card on that Caravan to open up new special card slots or (2) Discarding the Caravan to free up more regular card slots");
     }
 
 }

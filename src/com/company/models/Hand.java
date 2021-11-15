@@ -2,7 +2,7 @@ package com.company.models;
 
 public class Hand {
 
-    private int handSize = 5;
+    private final int handSize = 5;
     private Cards[] hand = new Cards[handSize];
     private int lastCardSlotSelected;
 
@@ -29,9 +29,9 @@ public class Hand {
         hand[card].setSuit("none");
     }
 
-    public Cards getCardInHand(int index){
-        return hand[index];
-    }
+    //public Cards getCardInHand(int index){
+      //  return hand[index];
+   // }
 
     public int getHandSize(){return handSize;}
 
