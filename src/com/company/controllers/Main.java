@@ -10,13 +10,8 @@ public class Main {
 
     public static void main(String[] args) {
 
-        //BIG NOTE:
-        //I was looking into adding another class to help with the load of the main game loop but apparently java only passes by value and kinda-sorta-technically passes by reference,
-        //but it is a whole rabbit hole I do not entirely get. I am not entirely sure how a second class would work because I would need to return/ make changes to multiple variables and have them be returned to main
-        //and not just change inside the class/object and then not return because I can only return 1 variable.
-
-        Board player1Board = new Board();
-        Board player2Board = new Board();
+        Board player1Board;
+        Board player2Board;
 
         Deck player1Deck;
         Deck player2Deck;
@@ -59,7 +54,7 @@ public class Main {
 
 
             String mainMenuInput = view.mainMenu();
-           while(!InputChecker.validateInt(mainMenuInput, 4)){
+           while(!InputChecker.validateInt(mainMenuInput, 3)){
                view.wrongInput();
                mainMenuInput = view.mainMenu();
            }
@@ -74,7 +69,7 @@ public class Main {
                    Cards[][] player1SpecialBoard1 = player1Board.getSpecialBoard1();
                    Cards[][] player1SpecialBoard2 = player1Board.getSpecialBoard2();
 
-                   player1Hand.drawCard(player1Deck);                                                                //Player 1 Turn
+                   player1Hand.drawCard(player1Deck);  //5th Card draw                                                              //Player 1 Turn
                    view.printBoard(player1Board, player2Board, player1Name);
                    view.printHand(player1Hand, player1Name);
                    String player1TurnInput = view.printMiniMenu();
@@ -96,6 +91,7 @@ public class Main {
                            player1CardInput = view.promptCardSelect();
                        }
                        int validatedPlayer1CardInput = Integer.parseInt(player1CardInput);
+                       validatedPlayer1CardInput -= 1;
 
 
                          if(validatedPlayer1TurnInput == 1){                            //Play Card
@@ -103,48 +99,106 @@ public class Main {
                              view.printBoard(player1Board, player2Board, player1Name);
                              String player1CardPlacement = view.promptCardPlacement();              //Maybe use a do while loop but IDK
 
-                             while(!InputChecker.validateInt(player1CardPlacement, 3)){    //These while loops that check for validity are bulky and I wish I could modularize it into one function but sending it to another class doesn't seem like it would work since I think I need the loop here.
+                             while(!InputChecker.validateInt(player1CardPlacement, 3)){    //These while loops that check for validity are bulky, and I wish I could modularize it into one function but sending it to another class doesn't seem like it would work since I think I need the loop here.
                                  view.wrongInput();
                                  player1CardPlacement = view.promptCardPlacement();
                              }
-                             int validatedPlayer1CardPlacement = Integer.parseInt(player1CardPlacement);  //The Input is valid but if the space is available needs to be checked
+                             int validatedPlayer1CardPlacement;  //The Input is valid but if the space is available needs to be checked
 
                              while(!InputChecker.validateBoardSpace(player1Board, player1CardPlacement, player1Hand.getCard(validatedPlayer1CardInput))){
                                  view.spaceFull();
+                                 player1CardPlacement = view.promptCardPlacement();
                                  while(!InputChecker.validateInt(player1CardPlacement, 3)){
                                      view.wrongInput();
                                      player1CardPlacement = view.promptCardPlacement();
                                  }
+                                 validatedPlayer1CardPlacement = Integer.parseInt(player1CardPlacement);  //These updates validated... with the new and correct player1 card placement to avoid an infinite loop in the outer while loop; It would spam view.spaceFull() forever
 
                              }
-                             validatedPlayer1CardPlacement = Integer.parseInt(player1CardPlacement);                    // Input for Play card is 100% processed and valid
+                             validatedPlayer1CardPlacement = Integer.parseInt(player1CardPlacement);                                   // Input for Play card is 100% processed and valid
+                             validatedPlayer1CardPlacement -= 1;     //To make sure the first pile will be processed as 0 and not 1
 
-                             Cards cardToBePlayed = player1Hand.getCard(validatedPlayer1CardInput);
+                             Cards cardToBePlayed = player1Hand.setCardTo(validatedPlayer1CardInput);
+                             Cards playedOn = player1MainBoard[player1Board.getLayerCount(validatedPlayer1CardPlacement)][validatedPlayer1CardPlacement];
 
-                             if(cardToBePlayed.getFaceCard() == true){
-                                 if(player1SpecialBoard1[player1Board.getLayerCount(validatedPlayer1CardPlacement)][validatedPlayer1CardPlacement].getIndex() == -1){  //Card Played if is face card
-                                     player1SpecialBoard1[player1Board.getLayerCount(validatedPlayer1CardPlacement)][validatedPlayer1CardPlacement] = cardToBePlayed;
-                                 } else {
-                                     player1SpecialBoard2[player1Board.getLayerCount(validatedPlayer1CardPlacement)][validatedPlayer1CardPlacement] = cardToBePlayed;
-                                 }
+                             int layerCount = player1Board.getLayerCount(validatedPlayer1CardPlacement);
+                             if(layerCount > 0){     //"layerCount" is for face cards who need to access the previous layer
+                                 layerCount -= 1;
+                             }
+
+                             if(cardToBePlayed.getFaceCard()){
+                                 playedOn = player1MainBoard[layerCount][validatedPlayer1CardPlacement];    //If the card is a face card then played on will reach into the previous layer (except for 0) to be able to properly apply effects
+                             }
+
+
+
+                             if(cardToBePlayed.getFaceCard()){
+                                     if(player1SpecialBoard1[layerCount][validatedPlayer1CardPlacement].getIndex() == -1){  //Card Played if is face card
+                                         player1SpecialBoard1[layerCount][validatedPlayer1CardPlacement] = cardToBePlayed;
+                                         } else {
+                                       player1SpecialBoard2[layerCount][validatedPlayer1CardPlacement] = cardToBePlayed;
+                                       }
                              } else {
-                                 player1MainBoard[player1Board.getLayerCount(validatedPlayer1CardPlacement)][validatedPlayer1CardPlacement] = cardToBePlayed;           //Card has been Played
+                                   player1MainBoard[player1Board.getLayerCount(validatedPlayer1CardPlacement)][validatedPlayer1CardPlacement] = cardToBePlayed;           //Card has been Played
                              }
 
-                             player1Hand.removeCard(validatedPlayer1CardInput); //Hand refilled
-                             player1Hand.drawCard(player1Deck);
 
                              int valueOfCard = cardToBePlayed.getValue();
 
-                            //Take the "checkCardEffects" function in the 'Cards' class and literally put it here.
-                             //Need to update 'Board' object with the changes the card made to it.
-                             //After that, the 'Play a Card' option should be finished and much of the game is complete, next is testing for bugs
-                             //Possible find more optimal way to have while loop-input checks and be able to reuse turn code for both players
+
+                             //Applying Card Effects
+
+                             if(valueOfCard <= 10){
+                                 player1Board.incTotal(validatedPlayer1CardPlacement, valueOfCard);
+                                 player1Board.incLayerCount(validatedPlayer1CardPlacement);
+                                                                                                                  //Card Affecting the board and applying affects
+                             } else if(playedOn.getValue() == null) {      //If the card is a face card it will make it to this point, and if the card under it is blank the nothing should happen, this prevents the game from trying to access a value from the null playedOn card
+                                 //Nothing
+                             } else if (valueOfCard == 11){
+
+                                 if(validatedPlayer1CardPlacement == 0){
+                                     player1Board.decTotal(0, playedOn.getValue());    //Decreasing the corresponding total to account for the card being removed
+                                 } else if(validatedPlayer1CardPlacement == 1){
+                                     player1Board.decTotal(1, playedOn.getValue());
+                                 } else if(validatedPlayer1CardPlacement == 2){
+                                     player1Board.decTotal(2, playedOn.getValue());
+                                 }
+
+
+                             } else if (valueOfCard == 12){             //Queens double the value, having immense difficulties with changing the 'order' in Board; Trying to enforce it at least
+
+                                 if(validatedPlayer1CardPlacement == 0){
+                                     player1Board.incTotal(0, playedOn.getValue());
+                                 } else if(validatedPlayer1CardPlacement == 1){
+                                     player1Board.incTotal(1, playedOn.getValue());
+                                 } else if(validatedPlayer1CardPlacement == 2){
+                                     player1Board.incTotal(2, playedOn.getValue());
+                                 }
+
+                             } else if (valueOfCard == 13){     //Tripling the value of the card that it has been played on
+
+                                 if(validatedPlayer1CardPlacement == 0){
+                                     player1Board.incTotal(0, (2*playedOn.getValue()));
+                                 } else if(validatedPlayer1CardPlacement == 1){
+                                     player1Board.incTotal(1, (2*playedOn.getValue()));
+                                 } else if(validatedPlayer1CardPlacement == 2){
+                                     player1Board.incTotal(2, (2*playedOn.getValue()));
+                                 }
+
+                             } else if (valueOfCard == 14){
+
+                                 player1Board.incTotal(validatedPlayer1CardPlacement, valueOfCard);         //This is the Same as the first option, but I am keeping layout consistent
+
+                             } else {
+                                 //nothing, cannot be any other value, I like having a default just in case
+                             }
+
+                             player1Hand.removeCard(validatedPlayer1CardInput); //Hand refilled
+
 
 
                          } else { // == 2 : Discard that card and draw a new one
                              player1Hand.removeCard(validatedPlayer1CardInput);
-                             player1Hand.drawCard(player1Deck);
                          }
 
 
@@ -158,14 +212,10 @@ public class Main {
                            player1CaravanChoice = view.promptCardPlacement();
                        }
                        int validatedPlayer1CaravanChoice = Integer.parseInt(player1CaravanChoice);
+                       validatedPlayer1CaravanChoice -= 1;
 
                        player1Board.resetCaravan(validatedPlayer1CaravanChoice);
-
-                       player1Board.setMainBoard(player1MainBoard);
-                       player1Board.setSpecialBoard1(player1SpecialBoard1);
-                       player1Board.setSpecialBoard2(player1SpecialBoard2);
                                                                                                                         //Resetting values in the discarded Caravan
-                       player1Board.setOrder(validatedPlayer1CaravanChoice, false);  //False / descending as a default might need to change
                        player1Board.setTotal(validatedPlayer1CaravanChoice, 0);
                        player1Board.setLayers(validatedPlayer1CaravanChoice, 0);
 
@@ -175,14 +225,175 @@ public class Main {
                    }
 
 
-                        //Literally Duplicate Code for player 2; Modularizing the turns into a single class seems like the go-to, but I can't work out the logistics in my head and doesn't seem possible as per the BIG NOTE at the start
+                        //Literally Duplicate Code for player 2
+                        //It is pretty bad practice and form, but I don't know how I'd modularize this to work for both players without some complete overhaul / rewrite
 
 
 
-                        //Possible adjustments in case time runs out:
-                        //1- Remove Jokers and the much complexity with them
-                        //2- restrict actions like choosing the order your cards can be played (ascending/descending) and force it to one unless there's a queen
-                        //3- Simplify Cards and effects
+
+
+
+                   Cards[][] player2MainBoard = player2Board.getMainBoard();
+                   Cards[][] player2SpecialBoard1 = player2Board.getSpecialBoard1();
+                   Cards[][] player2SpecialBoard2 = player2Board.getSpecialBoard2();
+
+                   player2Hand.drawCard(player2Deck);  //5th Card draw                                                              //Player 2 Turn
+                   view.printBoard(player2Board, player1Board, player2Name);
+                   view.printHand(player2Hand, player2Name);
+                   String player2TurnInput = view.printMiniMenu();
+
+                   while(!InputChecker.validateInt(player2TurnInput, 4)){
+                       view.wrongInput();
+                       player2TurnInput = view.printMiniMenu();
+                   }
+                   int validatedPlayer2TurnInput = Integer.parseInt(player2TurnInput);
+
+
+                   if(validatedPlayer2TurnInput == 1 || validatedPlayer2TurnInput == 2){              //Play a Card || Discard a Card are combined because both will require a player to choose a Card from their hand
+
+                       view.printHand(player2Hand, player2Name);
+                       String player2CardInput = view.promptCardSelect();
+
+                       while(!InputChecker.validateInt(player2CardInput, 5)){
+                           view.wrongInput();
+                           player2CardInput = view.promptCardSelect();
+                       }
+                       int validatedPlayer2CardInput = Integer.parseInt(player2CardInput);
+                       validatedPlayer2CardInput -= 1;
+
+
+                       if(validatedPlayer2TurnInput == 1){                            //Play Card
+
+                           view.printBoard(player2Board, player1Board, player2Name);
+                           String player2CardPlacement = view.promptCardPlacement();              //Maybe use a do while loop but IDK
+
+                           while(!InputChecker.validateInt(player2CardPlacement, 3)){    //These while loops that check for validity are bulky, and I wish I could modularize it into one function but sending it to another class doesn't seem like it would work since I think I need the loop here.
+                               view.wrongInput();
+                               player2CardPlacement = view.promptCardPlacement();
+                           }
+                           int validatedPlayer2CardPlacement;  //The Input is valid but if the space is available needs to be checked
+
+                           while(!InputChecker.validateBoardSpace(player2Board, player2CardPlacement, player2Hand.getCard(validatedPlayer2CardInput))){
+                               view.spaceFull();
+                               player2CardPlacement = view.promptCardPlacement();
+                               while(!InputChecker.validateInt(player2CardPlacement, 3)){
+                                   view.wrongInput();
+                                   player2CardPlacement = view.promptCardPlacement();
+                               }
+                               validatedPlayer2CardPlacement = Integer.parseInt(player2CardPlacement);  //These updates validated... with the new and correct player1 card placement to avoid an infinite loop in the outer while loop; It would spam view.spaceFull() forever
+
+                           }
+                           validatedPlayer2CardPlacement = Integer.parseInt(player2CardPlacement);                                   // Input for Play card is 100% processed and valid
+                           validatedPlayer2CardPlacement -= 1;     //To make sure the first pile will be processed as 0 and not 1
+
+                           Cards cardToBePlayed = player2Hand.setCardTo(validatedPlayer2CardInput);
+                           Cards playedOn = player2MainBoard[player2Board.getLayerCount(validatedPlayer2CardPlacement)][validatedPlayer2CardPlacement];
+
+                           int layerCount = player2Board.getLayerCount(validatedPlayer2CardPlacement);
+                            if(layerCount > 0){     //"layerCount" is for face cards who need to access the previous layer
+                               layerCount -= 1;
+                           }
+
+                           if(cardToBePlayed.getFaceCard()){
+                               playedOn = player2MainBoard[layerCount][validatedPlayer2CardPlacement];    //If the card is a face card then played on will reach into the previous layer (except for 0) to be able to properly apply effects
+                           }
+
+
+
+                           if(cardToBePlayed.getFaceCard()){
+                               if(player2SpecialBoard1[layerCount][validatedPlayer2CardPlacement].getIndex() == -1){  //Card Played if is face card
+                                   player2SpecialBoard1[layerCount][validatedPlayer2CardPlacement] = cardToBePlayed;
+                               } else {
+                                   player2SpecialBoard2[layerCount][validatedPlayer2CardPlacement] = cardToBePlayed;
+                               }
+                           } else {
+                               player2MainBoard[player2Board.getLayerCount(validatedPlayer2CardPlacement)][validatedPlayer2CardPlacement] = cardToBePlayed;           //Card has been Played
+                           }
+
+
+                           int valueOfCard = cardToBePlayed.getValue();
+
+
+                           //Applying Card Effects
+
+                           if(valueOfCard <= 10){
+                               player2Board.incTotal(validatedPlayer2CardPlacement, valueOfCard);
+                               player2Board.incLayerCount(validatedPlayer2CardPlacement);
+                               //Card Affecting the board and applying affects
+                           } else if(playedOn.getValue() == null) {      //If the card is a face card it will make it to this point, and if the card under it is blank the nothing should happen, this prevents the game from trying to access a value from the null playedOn card
+                               //Nothing
+                           } else if (valueOfCard == 11){
+
+                               if(validatedPlayer2CardPlacement == 0){
+                                   player2Board.decTotal(0, playedOn.getValue());    //Decreasing the corresponding total to account for the card being removed
+                               } else if(validatedPlayer2CardPlacement == 1){
+                                   player2Board.decTotal(1, playedOn.getValue());
+                               } else if(validatedPlayer2CardPlacement == 2){
+                                   player2Board.decTotal(2, playedOn.getValue());
+                               }
+
+
+                           } else if (valueOfCard == 12){             //Queens double the value, having immense difficulties with changing the 'order' in Board; Trying to enforce it at least
+
+                               if(validatedPlayer2CardPlacement == 0){
+                                   player2Board.incTotal(0, playedOn.getValue());
+                               } else if(validatedPlayer2CardPlacement == 1){
+                                   player2Board.incTotal(1, playedOn.getValue());
+                               } else if(validatedPlayer2CardPlacement == 2){
+                                   player2Board.incTotal(2, playedOn.getValue());
+                               }
+
+                           } else if (valueOfCard == 13){     //Tripling the value of the card that it has been played on
+
+                               if(validatedPlayer2CardPlacement == 0){
+                                   player2Board.incTotal(0, (2*playedOn.getValue()));
+                               } else if(validatedPlayer2CardPlacement == 1){
+                                   player2Board.incTotal(1, (2*playedOn.getValue()));
+                               } else if(validatedPlayer2CardPlacement == 2){
+                                   player2Board.incTotal(2, (2*playedOn.getValue()));
+                               }
+
+                           } else if (valueOfCard == 14){
+
+                               player2Board.incTotal(validatedPlayer2CardPlacement, valueOfCard);         //This is the Same as the first option, but I am keeping layout consistent
+
+                           } else {
+                               //nothing, cannot be any other value, I like having a default just in case
+                           }
+
+                           player2Hand.removeCard(validatedPlayer2CardInput); //Hand refilled
+
+
+
+
+                       } else { // == 2 : Discard that card and draw a new one
+                           player2Hand.removeCard(validatedPlayer2CardInput);
+                       }
+
+
+                   } else if (validatedPlayer2TurnInput == 3){                                       //Discard a Caravan
+
+                       view.printBoard(player2Board, player1Board, player2Name);
+                       String player2CaravanChoice = view.promptCaravanChoice();
+
+                       while(!InputChecker.validateInt(player2CaravanChoice, 3)){
+                           view.wrongInput();
+                           player2CaravanChoice = view.promptCardPlacement();
+                       }
+                       int validatedPlayer2CaravanChoice = Integer.parseInt(player2CaravanChoice);
+                       validatedPlayer2CaravanChoice -= 1;
+
+                       player2Board.resetCaravan(validatedPlayer2CaravanChoice);
+                       //Resetting values in the discarded Caravan
+                       player2Board.setTotal(validatedPlayer2CaravanChoice, 0);
+                       player2Board.setLayers(validatedPlayer2CaravanChoice, 0);
+
+
+                   } else if (validatedPlayer2TurnInput == 4){                                       //Quit
+                       break;   //To the main Menu
+                   }
+
+
 
 
 
@@ -192,11 +403,13 @@ public class Main {
                                                                                 //Victory Conditions
                    ConditionCheck victory = new ConditionCheck();
 
-                   if(victory.checkVictory(player1Board, player2Board) == true){
+                   if(victory.checkVictory(player1Board, player2Board)){
+                       view.printBoard(player1Board, player2Board, player1Name);
                        view.endScreen(player1Name, player2Name);
                        break;
                    }
-                   if(victory.checkVictory(player2Board, player1Board) == true){
+                   if(victory.checkVictory(player2Board, player1Board)){
+                       view.printBoard(player2Board, player1Board, player2Name);
                        view.endScreen(player2Name, player1Name);
                        break;
                    }
@@ -204,28 +417,32 @@ public class Main {
                                                                                 //Defeat Conditions
                    //Deck size is 54, 0-53 are the cards so 53 should end it
                    if(player1Deck.getCurrentCard() == (player1Deck.getDeckSize() -1)){
+                       view.printBoard(player1Board, player2Board, player1Name);
+                       view.outOfCards(player1Name);
                        view.endScreen(player2Name, player1Name);
                        break;
                    }
 
                    if(player2Deck.getCurrentCard() == (player2Deck.getDeckSize() -1)){
+                       view.printBoard(player1Board, player2Board, player1Name);
+                       view.outOfCards(player2Name);
                        view.endScreen(player1Name, player2Name);
                        break;
                    }
                }
 
-           } else if(validatedMainMenuInput == 2){
+           } else if(validatedMainMenuInput == 2){                                                  //Other Main Menu Options
                view.rulesMessage();
            } else if(validatedMainMenuInput == 3){
                break;
            }
 
-           view.goodbyeMessage();
+
        }
 
 
 
 
-
+        view.goodbyeMessage();
     }
 }

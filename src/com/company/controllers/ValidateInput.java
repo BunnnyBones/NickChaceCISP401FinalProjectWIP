@@ -15,8 +15,6 @@ public class ValidateInput {
         return true;
     }
 
-    //This checks to make sure input is an int, and a valid main menu choice
-    //Probably a better way to do this
     public boolean validateInt(String input, int limit){
         int x;
 
@@ -25,31 +23,6 @@ public class ValidateInput {
         } catch(NumberFormatException e){
             return false;
         }
-        /*
-        if(version == 1){               I might remove this, but I will keep it for a bit in case my solution below does not work
-
-            if(!(x == 1 || x == 2 || x == 3)){
-                return false;
-            }
-
-        }
-        if(version == 2){
-
-            if(!(x == 1 || x == 2 || x == 3 || x == 4 || x == 5)){
-                return false;
-            }
-
-        }
-
-        if(version == 3){
-
-            if(!(x == 1 || x == 2 || x == 3 || x == 4 || x == 5) || x == 6){
-                return false;
-            }
-
-        }
-
-         */
 
         for(int i = 1;i <= limit; i++){
             if(i == x){
@@ -71,16 +44,29 @@ public class ValidateInput {
             return false;
         }
 
+        x -= 1;  //Input is still 1-3 while code needs 0-2
+
+        int layerCount = board.getLayerCount(x);
+        if(x == 0){                                 //The current layer to place cards is always going to be the top one with no cards played
+            layerCount = 0;                         //The layer needs to be 1 lower so that the face cards are played on the previously played card
+        } else if(layerCount > 0){
+            layerCount -= 1;
+        }
+
         if(card.getFaceCard()){
-            if(specialBoard1[board.getLayerCount(x)][x].getIndex() == -1){      //-1 Indicates the space is a blank card
+            if(specialBoard1[layerCount][x].getIndex() == -1){      //-1 Indicates the space is a blank card
                 return true;
-            } else if(specialBoard2[board.getLayerCount(x)][x].getIndex() == -1){   //[Row][Column] ; x is the Integer version of the user input and itself was choosing a column to place a card into
+            } else if(specialBoard2[layerCount][x].getIndex() == -1){   //[Row][Column] ; x is the Integer version of the user input and itself was choosing a column to place a card into
                 return true;
             } else {
                 return false;
             }
         }
         //If the card was a face card then it should not make it past this point
+
+        if(board.getLayerCount(x) == 6){
+            return false;
+        }
 
         if(mainBoard[board.getLayerCount(x)][x].getIndex() == -1){
             return true;

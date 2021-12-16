@@ -9,7 +9,7 @@ public class Deck {
     private static final int deckSize = 54; //52 + 2 jokers
     private int currentCard;
 
-    private Cards[] theDeck = new Cards[54];
+    private final Cards[] theDeck = new Cards[54];
 
     public Deck() {
 
@@ -23,13 +23,13 @@ public class Deck {
             value = (index % 13) + 1;
 
             if(index <= 12){         //cards 0-12
-                suit = "H";  //Hearts
+                suit = "H  ";  //Hearts
             } else if (index <= 25){ // cards 13-25
-                suit = "D";  //Diamonds
+                suit = "D  ";  //Diamonds
             } else if (index <= 38){ // cards 26-38
-                suit = "S";  //Spades
+                suit = "S  ";  //Spades
             } else{              // cards 39-51
-                suit = "C";  //Clubs
+                suit = "C  ";  //Clubs
             }
 
             //10 is not considered a face card
@@ -43,9 +43,9 @@ public class Deck {
         }
 
              //The two jokers
-        Cards joker1 = new Cards("", 14, false, 52);
+        Cards joker1 = new Cards("", 14, true, 52);
         theDeck[52] = joker1;
-        Cards joker2 = new Cards("", 14, false, 53);
+        Cards joker2 = new Cards("", 14, true, 53);
         theDeck[53] = joker2;
 
         //End of Constructor
@@ -55,7 +55,7 @@ public class Deck {
 
     public void shuffleDeck(){
 
-        List<Integer> newDeck = new ArrayList<>();
+        List<Integer> newDeck = new ArrayList<>(54);
         for (int i = 0; i < 54; i++) {
             newDeck.add(i);
         }
@@ -63,6 +63,11 @@ public class Deck {
         Collections.shuffle(newDeck);
 
         Cards[] tempDeck = new Cards[54];
+        for(int i = 0; i<54; i++){
+            tempDeck[i] = new Cards("No", -2, false, -2);
+        }
+
+
         //Converting ArrayList to a temp. array as not to damage "theDeck"/original
         for(int i = 0; i < newDeck.size();i++){
             //This should make tempDeck's index equal to the index number of theDeck AT the randomized index in newDeck
@@ -88,11 +93,8 @@ public class Deck {
         Cards card = theDeck[currentCard];
 
         currentCard += 1;
-        return card;
-    }
 
-    public void setCurrentCard(int x){
-        currentCard = x;
+        return card;
     }
 
     public int getCurrentCard(){return currentCard;}
